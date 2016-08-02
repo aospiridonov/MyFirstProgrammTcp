@@ -16,9 +16,28 @@ void RobotManipulation::connect()
     }
 }
 
+void RobotManipulation::connectIP(const QString &ipDevice)
+{
+    mSocket.connectToHost(ipDevice, 4444);
+    if (!mSocket.waitForConnected(3000)) {
+        // If not, warn user.
+        qDebug() <<"Connection failed.";
+    } else {
+        qDebug() <<"Ok, connection is established";
+    }
+}
+void RobotManipulation::connectIPport(const QString &ipDevice, quint16 port)
+{
+    mSocket.connectToHost(ipDevice, port);
+    if (!mSocket.waitForConnected(3000)) {
+        qDebug() <<"Connection failed.";
+    } else {
+        qDebug() <<"Ok, connection is established";
+    }
+}
+
 void RobotManipulation::sendCommand(const QString &action)
 {
-    // Here we send "pad <padId> <x> <y>" command.
     if (mSocket.state() != QTcpSocket::ConnectedState) {
         qDebug() <<"send failed.";
         return;
@@ -31,8 +50,6 @@ void RobotManipulation::sendCommand(const QString &action)
 
 RobotManipulation::~RobotManipulation()
 {
-    // Gracefully disconnecting from host.
     mSocket.disconnectFromHost();
-    // Here we do not care for success or failure of operation since we will close anyway.
     mSocket.waitForDisconnected(3000);
 }
