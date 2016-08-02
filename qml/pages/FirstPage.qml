@@ -56,7 +56,7 @@ Page {
             id: column
 
             width: page.width
-            spacing: Theme.paddingMedium
+            spacing: Theme.paddingLarge
             PageHeader {
                 title: qsTr("My First Program")
             }
@@ -143,7 +143,7 @@ Page {
                     color: Theme.secondaryColor
                 }
 
-                GridView {
+                SilicaGridView {
                     id: gridView
                     width: parent.width-20
                     height: Theme.itemSizeLarge*5
@@ -152,6 +152,9 @@ Page {
                     cellWidth: width/4
                     cellHeight: Theme.itemSizeLarge
                     currentIndex: -1
+                    clip: true
+                    snapMode: GridView.SnapOneRow
+
                     model: ListModel {
                         id: listModel
                     }
@@ -163,13 +166,17 @@ Page {
                     }
 
                     highlight: Rectangle {
-                                color: "lightsteelblue";
-                                radius: 5
-                            }
+                        //color: "lightsteelblue";
+                        color: Theme.highlightColor
+                        radius: 5
+                    }
 
                     delegate: Item {
                         width: GridView.view.cellWidth
                         height: GridView.view.cellHeight
+
+                        Component.onCompleted: gridView.scrollToBottom()
+
                         Button {
                             preferredWidth: 100
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -182,46 +189,32 @@ Page {
                             }
                         }
                     }
+
+                    VerticalScrollDecorator {flickable: gridView}
                 }
             }
 
-            Column {
+            Row {
                 id: viewCommands
-                width: page.width
-                height: 100
-                spacing: Theme.paddingSmall
-                Row {
-                    spacing: Theme.paddingLarge
-                    anchors.horizontalCenter: parent.horizontalCenter
+                spacing: Theme.paddingLarge
+                anchors.horizontalCenter: parent.horizontalCenter
 
-                    Button {
-                        preferredWidth: 100
-                        Image {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            source: "image://theme/icon-l-play"
-                        }
-                        onClicked:
-                        {
-                            console.log("Timer Run")
-                            timer.idx = 0;
-                            timer.start()
-                        }
-                    }
-                    Button {
-                        preferredWidth: 100
-                        Image {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.verticalCenter: parent.verticalCenter
-                            source: "image://theme/icon-l-clear"
-                        }
-                        onClicked:
-                        {
-                            listModel.clear()
-                        }
+                IconButton {
+                    icon.source: "image://theme/icon-l-play"
+                    onClicked:
+                    {
+                        console.log("Timer Run")
+                        timer.idx = 0;
+                        timer.start()
                     }
                 }
-
+                IconButton {
+                    icon.source: "image://theme/icon-l-clear"
+                    onClicked:
+                    {
+                        listModel.clear()
+                    }
+                }
             }
 
             Timer {
