@@ -89,7 +89,7 @@ Page {
                         }
                         onClicked:
                         {
-                            listModel.append({"icon": "image://theme/icon-m-back", "rot": 90})
+                            listModel.append({"command": "forwar", "icon": "image://theme/icon-m-back", "rot": 90})
                         }
                     }
                     Button {
@@ -102,7 +102,7 @@ Page {
                         }
                         onClicked:
                         {
-                            listModel.append({"icon": "image://theme/icon-m-back", "rot": -90})
+                            listModel.append({"command": "back", "icon": "image://theme/icon-m-back", "rot": -90})
                         }
                     }
                     Button {
@@ -114,7 +114,7 @@ Page {
                         }
                         onClicked:
                         {
-                            listModel.append({"icon": "image://theme/icon-m-rotate-left", "rot": 0})
+                            listModel.append({"command": "left", "icon": "image://theme/icon-m-rotate-left", "rot": 0})
                         }
                     }
                     Button {
@@ -126,7 +126,7 @@ Page {
                         }
                         onClicked:
                         {
-                            listModel.append({"icon": "image://theme/icon-m-rotate-right", "rot": 0})
+                            listModel.append({"command": "right", "icon": "image://theme/icon-m-rotate-right", "rot": 0})
                         }
                     }
                 }
@@ -148,10 +148,10 @@ Page {
                     width: parent.width-20
                     height: Theme.itemSizeLarge*5
 
-
                     anchors.horizontalCenter: parent.horizontalCenter
                     cellWidth: width/4
                     cellHeight: Theme.itemSizeLarge
+                    currentIndex: -1
                     model: ListModel {
                         id: listModel
                     }
@@ -161,6 +161,11 @@ Page {
                         color: Theme.highlightBackgroundColor
                         opacity: 0.1
                     }
+
+                    highlight: Rectangle {
+                                color: "lightsteelblue";
+                                radius: 5
+                            }
 
                     delegate: Item {
                         width: GridView.view.cellWidth
@@ -199,6 +204,8 @@ Page {
                         onClicked:
                         {
                             console.log("Timer Run")
+                            timer.idx = 0;
+                            timer.start()
                         }
                     }
                     Button {
@@ -215,6 +222,46 @@ Page {
                     }
                 }
 
+            }
+
+            Timer {
+                id: timer
+                interval: 1000; repeat: true
+                running: false
+                triggeredOnStart: false
+                property var idx;
+                onTriggered: {
+                    console.log("Timer tick")
+                    if (idx !== gridView.count)
+                    {
+                        console.log(gridView.model.get(idx).command)
+                        if (gridView.model.get(idx).command === "back")
+                        {
+                            console.log("is_back")
+                        }
+                        else if(gridView.model.get(idx).command === "forward")
+                        {
+                            console.log("is_forward")
+                        }
+                        else if(gridView.model.get(idx).command === "left")
+                        {
+                            console.log("is_left")
+                        }
+                        else if(gridView.model.get(idx).command === "right")
+                        {
+                            console.log("is_right")
+                        }
+
+                        gridView.currentIndex = idx;
+                        idx ++;
+                    }
+                    else
+                    {
+                        console.log("stop command")
+                        gridView.currentIndex = -1;
+                        timer.stop();
+                    }
+                }
             }
 
         }
